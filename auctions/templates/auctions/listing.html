@@ -1,0 +1,93 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Listing{% endblock %}
+
+{% block head %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: 500px auto;
+        background-color: grey;
+        /* padding: 2px; */
+    }
+    .grid-item {
+        background-color: #EEEEEE;
+        /* border: 1px solid grey; */
+        padding: 20px;
+        font-size: 20px;
+        text-align: left;
+    }
+
+    .small-text {
+        font-size: 16px;
+    }
+
+    .smallest-text {
+        font-size: 13px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+</style>
+{% endblock %}
+
+{% block body %}
+<form action="{% url 'listing' listing.id %}" method="post">
+{% csrf_token %}
+    <div class="grid-container">
+        <div class="grid-item">
+            <h2>Listing: {{ listing.name }}</h2>
+            <a href="{{ listing.image_url }}"><img width=400px src="{{ listing.image_url }}" alt="Image"></a>
+        </div>
+        <div class="grid-item">
+            <p>Description: {{ listing.description }}</p>
+            <p><b>Price: $ {{ listing.price|floatformat:2 }}</b></p>
+            <p class="small-text">Category: {{ listing.category }}</p>
+            {% if user.is_authenticated %}
+                <input type="number" autofocus class="form-control" name="bid_price" {{ visibility }} style="width: 200px" step="any">
+                <br>
+                {% if message %}
+                    <p class="smallest-text" style="color: grey;">{{ message }}</p>
+                {% endif %}
+                <button style="width: 200px" type="submit" class="btn btn-primary btn-lg" name="bid" {{ visibility }}>Place Bid</button>
+                <button style="width: 200px" type="submit" class="btn btn-outline-secondary btn-lg" name="watchlist" {{ visibility }}>Add to watchlist</button>
+                {% if listing.user.id == user.id %}
+                <button style="width: 200px" type="submit" class="btn btn-light btn-lg" name="close" {{ visibility }}>Close Auction</button>
+                {% endif %}
+            {% endif %}
+            <p class="smallest-text">Listed by: {{ listing.user }}</p>
+            <p class="smallest-text">Created: {{ listing.created }}</p>
+        </div>
+    </div>
+    <table style="width: 100%; background-color: #EEEEEE;">
+        <thead>
+            <tr>
+              <th><h5 style="padding: 20px">Comments</h5></th>
+              </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+            <tr>
+                <td class="small-text" style="width: 20%; padding: 20px">
+                    <p style="margin-bottom: -4px;">{{ comment.user }}</p>
+                    <p class="smallest-text">{{ comment.created }}</p>
+                </td>
+                <td style="padding: 20px">{{ comment.comment }}</td>
+            </tr>
+            {% empty %}
+            <tr><td>No comments.</td></tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    <br>
+    {% if user.is_authenticated %}
+    <div class="form-control-sm">
+        {{ form.comment.label_tag }}
+        {{ form.comment }}
+    <div style="text-align: center;">
+        <button style="width: 200px;" type="submit" class="btn btn-light btn-lg" name="comment_button" {{ visibility }}>Add Comment</button>
+    </div>
+    </div>
+    {% endif %}
+</form>
+{% endblock %}

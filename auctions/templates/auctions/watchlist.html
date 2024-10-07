@@ -1,0 +1,52 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Watchlist{% endblock %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+    <form action="{% url 'watchlist' %}" method="post">
+        {% csrf_token %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for listing in watchlist %}
+                    <tr>
+                        <td>
+                            <a href="{{ listing.image_url }}"><img width=100px src="{{ listing.image_url }}" alt="Image"></a>
+                        </td>
+                        <td>
+                            <a href="{% url 'listing' listing.id %}">{{ listing.name }} </a>
+                        </td>
+                        <td>{{ listing.category }}</td>
+                        <td>{{ listing.description }}</td>
+                        <td>$ {{ listing.price|floatformat:2 }}</td>
+                        <td>{{ listing.created }}</td>
+                        <td>
+                            {% if listing.is_active %} Active
+                            {% else %} Inactive
+                            {% endif %}
+                        </td>
+                        <td><button type="submit" class="btn btn-link" name="remove" value="{{ listing.id }}">Remove</button></td>
+                    </tr>
+
+                {% empty %}
+                    <tr>
+                        <td>No listings.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </form>
+{% endblock %}

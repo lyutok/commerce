@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+{% block title %}Active Listings{% endblock %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Created</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for listing in listings %}
+                <tr>
+                  <td>
+                    <a href="{{ listing.image_url }}"><img width=100px src="{{ listing.image_url }}" alt="Image"></a>
+                  </td>
+                  <td>
+                    <a href="{% url 'listing' listing.id %}">{{ listing.name }} </a>
+                  </td>
+                  <td>{{ listing.category }}</td>
+                  <td>{{ listing.description }}</td>
+                  <td>$ {{ listing.price|floatformat:2 }}</td>
+                  <td>{{ listing.created }}</td>
+                </tr>
+            {% empty %}
+              <tr><td>No active listings.</td></tr>
+            {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}
